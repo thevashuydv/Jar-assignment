@@ -1,0 +1,21 @@
+# VPA: resource recommendations for inventory-service.
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: inventory-service
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: inventory-service
+  updatePolicy:
+    updateMode: "Off"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: inventory-service
+        minAllowed:
+          cpu: 25m
+          memory: 32Mi
+        maxAllowed:
+          cpu: "1"
+          memory: 256Mi

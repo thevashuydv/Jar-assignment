@@ -1,0 +1,23 @@
+# Vertical Pod Autoscaler: recommend or auto-adjust CPU/memory for api-gateway.
+# Mode: "Recommendation" only logs; "Auto" can update resource requests (needs VPA admission controller).
+# VPA components must be installed in the cluster (see README).
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: api-gateway
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api-gateway
+  updatePolicy:
+    updateMode: "Off"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: api-gateway
+        minAllowed:
+          cpu: 25m
+          memory: 32Mi
+        maxAllowed:
+          cpu: "1"
+          memory: 256Mi

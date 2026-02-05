@@ -1,0 +1,17 @@
+# ClusterIP Service for orders-service. Used for service-to-service communication
+# (e.g. api-gateway → orders-service.NAMESPACE.svc.cluster.local).
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-service
+  labels:
+    app: orders-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: orders-service

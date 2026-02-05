@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(
+            name: 'SERVICE',
+            choices: ['api-gateway', 'orders-service', 'inventory-service'],
+            description: 'Which service to build and deploy'
+        )
+        choice(
+            name: 'K8S_NAMESPACE',
+            choices: ['staging', 'production'],
+            description: 'Target Kubernetes namespace'
+        )
+    }
+
+    environment {
+        K8S_NAMESPACE = "${params.K8S_NAMESPACE}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    dir("services/${params.SERVICE}") {
+                        docker.build("${params.SERVICE}:latest", '.')
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh """
+                    kubectl apply -f k8s/00-namespaces.yaml
+                    kubectl apply -f k8s/01-rbac/ -n ${env.K8S_NAMESPACE}
+                    kubectl apply -f k8s/${params.SERVICE}/ -n ${env.K8S_NAMESPACE}
+                """
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline finished. Service: ${params.SERVICE}, Namespace: ${env.K8S_NAMESPACE}"
+            echo "Check cluster: kubectl get pods -n ${env.K8S_NAMESPACE}"
+        }
+    }
+}

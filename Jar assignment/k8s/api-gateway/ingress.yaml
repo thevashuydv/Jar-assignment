@@ -1,0 +1,26 @@
+# Ingress: expose api-gateway as external entry point.
+# Ingress controller (nginx) routes host traffic to api-gateway Service.
+# Only pods that pass the Service's readiness check receive traffic.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+  annotations:
+    # nginx ingress: use backend service readiness
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    # Host optional; with kind, often http://localhost
+    - host: localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 80

@@ -1,0 +1,22 @@
+# kind cluster configuration for local Kubernetes
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+# Single control-plane node; add workers if you need multi-node for affinity
+nodes:
+  - role: control-plane
+    # Map host port 80 to ingress (nginx) for easy local access
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP

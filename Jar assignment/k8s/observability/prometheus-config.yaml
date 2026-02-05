@@ -1,0 +1,26 @@
+# Prometheus scrape config: collect metrics from api-gateway, orders-service, inventory-service.
+# Uses in-cluster Service DNS. Each service exposes /metrics (Prometheus client format).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    scrape_configs:
+      - job_name: 'api-gateway'
+        static_configs:
+          - targets: ['api-gateway:80']
+            labels:
+              service: api-gateway
+      - job_name: 'orders-service'
+        static_configs:
+          - targets: ['orders-service:80']
+            labels:
+              service: orders-service
+      - job_name: 'inventory-service'
+        static_configs:
+          - targets: ['inventory-service:80']
+            labels:
+              service: inventory-service

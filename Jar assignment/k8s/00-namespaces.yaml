@@ -1,0 +1,14 @@
+# Namespaces for the platform. Apply once, then deploy workloads with -n staging or -n production.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: staging
+  labels:
+    env: staging
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    env: production

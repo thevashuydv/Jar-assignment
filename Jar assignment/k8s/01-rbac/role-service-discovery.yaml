@@ -1,0 +1,48 @@
+# Minimal RBAC: allow reading Services and Endpoints in the same namespace.
+# Used for service-to-service discovery via Kubernetes DNS; no write permissions.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: service-discovery-reader
+rules:
+  - apiGroups: [""]
+    resources: ["services", "endpoints"]
+    verbs: ["get", "list"]
+---
+# Bind the role above to each service's ServiceAccount (minimal required permissions).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: api-gateway-discovery
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: service-discovery-reader
+subjects:
+  - kind: ServiceAccount
+    name: api-gateway
+    # namespace: same as the RoleBinding (set via kubectl apply -n <namespace>)
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: orders-service-discovery
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: service-discovery-reader
+subjects:
+  - kind: ServiceAccount
+    name: orders-service
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: inventory-service-discovery
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: service-discovery-reader
+subjects:
+  - kind: ServiceAccount
+    name: inventory-service

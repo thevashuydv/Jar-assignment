@@ -1,0 +1,10 @@
+# PDB: at least 1 orders-service pod must remain during voluntary disruptions.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: orders-service
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: orders-service

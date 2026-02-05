@@ -1,0 +1,10 @@
+# PDB: at least 1 inventory-service pod during voluntary disruptions.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: inventory-service
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: inventory-service
