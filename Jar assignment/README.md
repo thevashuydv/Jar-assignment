@@ -238,15 +238,6 @@ The pipeline does **only** what the assignment specifies for Step 7:
 
 ---
 
-## Running the Platform
-
-Quick recap after [Local Setup](#local-setup):
-
-1. Create cluster: `kind create cluster --name jar-cluster --config kind-config.yaml`
-2. Install Metrics Server, Ingress, and (optionally) VPA as above.
-3. Build and load images, then apply `k8s/` manifests in the order given.
-4. Call the api-gateway via Ingress (e.g. `http://localhost` or port-forward as above).
-
 To tear down:
 
 ```bash
